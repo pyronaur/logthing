@@ -1,5 +1,5 @@
 import * as util from 'util';
-import clc, { color } from 'console-log-colors';
+import { color } from 'console-log-colors';
 
 
 type Logger<T extends string> = {
