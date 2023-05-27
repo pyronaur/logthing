@@ -2,7 +2,7 @@
 	"name": "logthing",
 	"description": "Simple logging with log levels configurable on the fly. Organize your console.log calls without losing your sanity.",
 	"license": "MIT",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"type": "module",
