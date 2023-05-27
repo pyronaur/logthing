@@ -16,15 +16,81 @@ type LogthingInterface<T extends string> = {
 	unmute_all: () => void;
 }
 
+
+export type Template<T extends string> = {
+	name: T;
+	prefix: string;
+}
+
+const flag = (name: string) => {
+	return color.dim(`${name} ❯`);
+}
+
+export const Templates: Record<string, <T extends string>(name: T, level: string) => Template<T>> = {
+	info: (name, level) => {
+		return {
+			name,
+			prefix: `${flag(name)} ${color.whiteBright("✪")} ${level}:`,
+		}
+	},
+	warn: (name, level) => {
+		return {
+			name,
+			prefix: `${flag(name)} ${color.bold.c214("▲")} ${color.bold.underline.c214(level)}:`,
+		}
+	},
+	error: (name, level) => {
+		return {
+			name,
+			prefix: `${flag(name)} ${color.redBright("✖")} ${color.underline.redBright(level)}:`,
+		}
+	},
+	debug: (name, level) => {
+		return {
+			name,
+			prefix: `${flag(name)} ${color.yellowBright("◌")} ${color.underline.yellowBright(level)}:`,
+		}
+	},
+	plain: (name, level) => {
+		return {
+			name,
+			prefix: `${flag(name)} ${level}:`,
+		}
+	}
+} as const;
+
+type LevelConfig<T = string> = T | {
+	name: T;
+	prefix: string;
+};
+
+
 export class Logthing<TLevel extends string> {
 	public loggers: Record<TLevel, Logger<TLevel>>;
 
-	constructor (private name: string, levels: TLevel[]) {
+	constructor (name: string, levels: LevelConfig<TLevel>[]) {
 		this.loggers = {} as Record<TLevel, Logger<TLevel>>;
 		for (const level of levels) {
-			this.loggers[level] = {
+
+
+			let level_name: TLevel;
+			let prefix: string;
+
+			if (typeof level === "string") {
+				level_name = level;
+				const template = (Templates[level_name] ? Templates[level_name] : Templates['plain']) as typeof Templates[number];
+				prefix = template(name, level_name).prefix;
+			} else {
+				level_name = level.name;
+				prefix = level.prefix;
+			}
+
+
+
+
+			this.loggers[level_name] = {
 				active: true,
-				callback: this.create_named_logger(level, this.name),
+				callback: this.create_named_logger(prefix),
 			};
 		}
 	}
@@ -43,8 +109,7 @@ export class Logthing<TLevel extends string> {
 		}
 	}
 
-	private create_named_logger(level: string, name: string) {
-		const prefix = `${color.dim(name)} ⇢ ${color.greenBright(level)}:`;
+	private create_named_logger(prefix: string) {
 		// Remove color codes from the prefix
 		const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
 		const padding = ' '.repeat(plain_prefix.length + 1);
