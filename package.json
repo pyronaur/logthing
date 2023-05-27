@@ -1,0 +1,26 @@
+{
+	"name": "logthing",
+	"version": "0.1.0",
+	"description": "Simple logging with log levels configurable on the fly. Organize your console.log calls without losing your sanity.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/pyronaur/logthing.git"
+	},
+	"keywords": [
+		"console.log",
+		"chalk",
+		"logger",
+		"logging",
+		"simple"
+	],
+	"author": "pyronaur",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/pyronaur/logthing/issues"
+	},
+	"homepage": "https://github.com/pyronaur/logthing#readme"
+}
