@@ -144,33 +144,3 @@ export class Logthing<TLevel extends string> {
 	}
 }
 
-
-(async () => {
-	const test = new Logthing('Logthing', ['info', 'debug']);
-	const x = test.get_interface()
-
-	x.debug('hello', 'world')
-		.debug({ howdy: 'test' })
-		.debug({ howdy: 'test' }, { double: 'test' })
-		.debug({
-			howdy: 'test',
-			test:
-				[{ test: 'test' },
-				{ test: 'test' },
-				{ test: 'test' },
-				{ test: 'test' },
-				{ test: 'test' },
-				{ test: 'test' },]
-		})
-
-		.info('hello', 'world')
-		.debug(new Error('test'))
-		.debug('yo')
-		.info(`one
-day this happened and
-it was really cool`)
-		.info(`one
-day this happened and
-it was really cool`, "hello")
-
-})()
