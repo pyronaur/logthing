@@ -44,7 +44,7 @@ export class Logthing<TLevel extends string> {
 	}
 
 	private create_named_logger(level: string, name: string) {
-		const prefix = color.dim(`${name}(${color.bold(level)}):`);
+		const prefix = `${color.dim(name)} ⇢ ${color.greenBright(level)}:`;
 		// Remove color codes from the prefix
 		const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
 		const padding = ' '.repeat(plain_prefix.length + 1);
@@ -143,4 +143,3 @@ export class Logthing<TLevel extends string> {
 		this.unmute_levels(Object.keys(this.loggers) as TLevel[]);
 	}
 }
-
