@@ -1,4 +1,6 @@
 import * as util from 'util';
+import clc, { color } from 'console-log-colors';
+
 
 type Logger<T extends string> = {
 	active: boolean;
@@ -42,14 +44,14 @@ export class Logthing<TLevel extends string> {
 	}
 
 	private create_named_logger(level: string, name: string) {
-		const prefix = `${name}(${level}):`;
-
+		const prefix = color.gray(`${name}(${color.bold(level)}):`);
+		// Remove color codes from the prefix
+		const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
+		const padding = ' '.repeat(plain_prefix.length + 1);
 
 		return (...args: unknown[]): LogthingInterface<TLevel> => {
 			const iface = this.get_interface()
-			const padding = ' '.repeat(prefix.length + 1);
 			if (args.length === 0) {
-				console.log(prefix);
 				return iface;
 			}
 
@@ -141,5 +143,4 @@ export class Logthing<TLevel extends string> {
 		this.unmute_levels(Object.keys(this.loggers) as TLevel[]);
 	}
 }
-
 
