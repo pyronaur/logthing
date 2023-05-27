@@ -1,5 +1,11 @@
 # logthing
 
+## 0.2.0
+
+### Minor Changes
+
+- Easily reusable templates & prettier logs
+
 ## 0.1.3
 
 ### Patch Changes
