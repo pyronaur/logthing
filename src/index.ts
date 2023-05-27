@@ -44,7 +44,7 @@ export class Logthing<TLevel extends string> {
 	}
 
 	private create_named_logger(level: string, name: string) {
-		const prefix = color.gray(`${name}(${color.bold(level)}):`);
+		const prefix = color.dim(`${name}(${color.bold(level)}):`);
 		// Remove color codes from the prefix
 		const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
 		const padding = ' '.repeat(plain_prefix.length + 1);
@@ -144,3 +144,33 @@ export class Logthing<TLevel extends string> {
 	}
 }
 
+
+(async () => {
+	const test = new Logthing('Logthing', ['info', 'debug']);
+	const x = test.get_interface()
+
+	x.debug('hello', 'world')
+		.debug({ howdy: 'test' })
+		.debug({ howdy: 'test' }, { double: 'test' })
+		.debug({
+			howdy: 'test',
+			test:
+				[{ test: 'test' },
+				{ test: 'test' },
+				{ test: 'test' },
+				{ test: 'test' },
+				{ test: 'test' },
+				{ test: 'test' },]
+		})
+
+		.info('hello', 'world')
+		.debug(new Error('test'))
+		.debug('yo')
+		.info(`one
+day this happened and
+it was really cool`)
+		.info(`one
+day this happened and
+it was really cool`, "hello")
+
+})()
