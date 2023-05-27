@@ -1,4 +1,4 @@
-import { Logthing, Templates } from '../src/index';
+import { Logthing } from '../src/index';
 
 const instance = new Logthing('Inception', [
 	'info',
@@ -14,6 +14,10 @@ const instance = new Logthing('Inception', [
 		name: 'boom',
 		prefix: 'Boom 👉',
 		flag: '💥 ',
+	},
+	{
+		name: 'banana',
+		template: 'warn',
 	}
 ]);
 
@@ -50,3 +54,4 @@ log
 	})
 	.custom("Custom Template")
 	.boom("Custom Template 2")
+	.banana("🍌 Banana Template")

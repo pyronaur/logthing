@@ -27,36 +27,36 @@ const default_flag = (name: string) => {
 	return color.dim(`${name} ❯ `);
 }
 
-export const Templates: Record<string, <T extends string>(name: T, level: string) => Template<T>> = {
-	info: (name, level) => {
+export const Templates = {
+	"info": (name: string, level: string) => {
 		return {
 			name,
 			prefix: `${color.whiteBright("✪")} ${level}:`,
 			flag: default_flag(name),
 		}
 	},
-	warn: (name, level) => {
+	"warn": (name: string, level: string) => {
 		return {
 			name,
 			prefix: `${color.bold.c214("▲")} ${color.bold.underline.c214(level)}:`,
 			flag: default_flag(name),
 		}
 	},
-	error: (name, level) => {
+	"error": (name: string, level: string) => {
 		return {
 			name,
 			prefix: `${color.redBright("✖")} ${color.underline.redBright(level)}:`,
 			flag: default_flag(name),
 		}
 	},
-	debug: (name, level) => {
+	"debug": (name: string, level: string) => {
 		return {
 			name,
 			prefix: `${color.yellowBright("◌")} ${color.underline.yellowBright(level)}:`,
 			flag: default_flag(name),
 		}
 	},
-	plain: (name, level) => {
+	"plain": (name: string, level: string) => {
 		return {
 			name,
 			prefix: `${level}:`,
@@ -64,11 +64,13 @@ export const Templates: Record<string, <T extends string>(name: T, level: string
 		}
 	}
 } as const;
+type AvailableTemplateNames = keyof typeof Templates;
 
 type LevelConfig<T = string> = T | {
 	name: T;
-	prefix: string;
+	prefix?: string;
 	flag?: string;
+	template?: AvailableTemplateNames;
 };
 
 
@@ -78,24 +80,24 @@ export class Logthing<TLevel extends string> {
 	constructor (name: string, levels: LevelConfig<TLevel>[]) {
 		this.loggers = {} as Record<TLevel, Logger<TLevel>>;
 		for (const level of levels) {
-
-
 			let level_name: TLevel;
 			let prefix: string = '';
 			let flag: string = '';
 
 			if (typeof level === "string") {
 				level_name = level;
-				const template = (Templates[level_name] ? Templates[level_name] : Templates['plain']) as typeof Templates[number];
+				const template = (level_name in Templates) ? Templates[level_name as AvailableTemplateNames] : Templates['plain'];
 				({ flag, prefix } = template(name, level_name));
 			} else {
 				level_name = level.name;
-				prefix = level.prefix;
-				flag = level.flag ? level.flag : default_flag(name);
+				if (level.template && (level.template in Templates)) {
+					const template = Templates[level.template as AvailableTemplateNames];
+					({ flag, prefix } = template(name, level_name));
+				} else {
+					prefix = level.prefix || '';
+					flag = level.flag ? level.flag : default_flag(name);
+				}
 			}
-
-
-
 
 			this.loggers[level_name] = {
 				active: true,
