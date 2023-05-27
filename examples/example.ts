@@ -9,15 +9,18 @@ const instance = new Logthing('Inception', [
 	{
 		name: 'custom',
 		prefix: 'CUSTOM >> ',
+	},
+	{
+		name: 'boom',
+		prefix: 'Boom 👉',
+		flag: '💥 ',
 	}
-
 ]);
 
 const log = instance.get_interface();
 
 log
 	.no_template("No Template")
-	.custom("Custom Template")
 	.warn('Warning', 'You are in a dream')  // Test logging strings
 	.debug('Welcome', 'You have entered the world of dreams')  // Test logging strings
 	.debug({ character: 'C◍obb' }) // Test logging simple object
@@ -45,3 +48,5 @@ log
 		dreamLayers: 4,
 		dreamCollapsed: false
 	})
+	.custom("Custom Template")
+	.boom("Custom Template 2")

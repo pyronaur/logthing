@@ -20,41 +20,47 @@ type LogthingInterface<T extends string> = {
 export type Template<T extends string> = {
 	name: T;
 	prefix: string;
+	flag: string;
 }
 
-const flag = (name: string) => {
-	return color.dim(`${name} ❯`);
+const default_flag = (name: string) => {
+	return color.dim(`${name} ❯ `);
 }
 
 export const Templates: Record<string, <T extends string>(name: T, level: string) => Template<T>> = {
 	info: (name, level) => {
 		return {
 			name,
-			prefix: `${flag(name)} ${color.whiteBright("✪")} ${level}:`,
+			prefix: `${color.whiteBright("✪")} ${level}:`,
+			flag: default_flag(name),
 		}
 	},
 	warn: (name, level) => {
 		return {
 			name,
-			prefix: `${flag(name)} ${color.bold.c214("▲")} ${color.bold.underline.c214(level)}:`,
+			prefix: `${color.bold.c214("▲")} ${color.bold.underline.c214(level)}:`,
+			flag: default_flag(name),
 		}
 	},
 	error: (name, level) => {
 		return {
 			name,
-			prefix: `${flag(name)} ${color.redBright("✖")} ${color.underline.redBright(level)}:`,
+			prefix: `${color.redBright("✖")} ${color.underline.redBright(level)}:`,
+			flag: default_flag(name),
 		}
 	},
 	debug: (name, level) => {
 		return {
 			name,
-			prefix: `${flag(name)} ${color.yellowBright("◌")} ${color.underline.yellowBright(level)}:`,
+			prefix: `${color.yellowBright("◌")} ${color.underline.yellowBright(level)}:`,
+			flag: default_flag(name),
 		}
 	},
 	plain: (name, level) => {
 		return {
 			name,
-			prefix: `${flag(name)} ${level}:`,
+			prefix: `${level}:`,
+			flag: default_flag(name),
 		}
 	}
 } as const;
@@ -62,6 +68,7 @@ export const Templates: Record<string, <T extends string>(name: T, level: string
 type LevelConfig<T = string> = T | {
 	name: T;
 	prefix: string;
+	flag?: string;
 };
 
 
@@ -74,15 +81,17 @@ export class Logthing<TLevel extends string> {
 
 
 			let level_name: TLevel;
-			let prefix: string;
+			let prefix: string = '';
+			let flag: string = '';
 
 			if (typeof level === "string") {
 				level_name = level;
 				const template = (Templates[level_name] ? Templates[level_name] : Templates['plain']) as typeof Templates[number];
-				prefix = template(name, level_name).prefix;
+				({ flag, prefix } = template(name, level_name));
 			} else {
 				level_name = level.name;
 				prefix = level.prefix;
+				flag = level.flag ? level.flag : default_flag(name);
 			}
 
 
@@ -90,7 +99,7 @@ export class Logthing<TLevel extends string> {
 
 			this.loggers[level_name] = {
 				active: true,
-				callback: this.create_named_logger(prefix),
+				callback: this.create_named_logger(`${flag}${prefix}`),
 			};
 		}
 	}
