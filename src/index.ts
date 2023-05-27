@@ -2,7 +2,7 @@ import * as util from 'util';
 
 type Logger<T extends string> = {
 	active: boolean;
-	callback: (content: string, ...args: unknown[]) => LogthingInterface<T>;
+	callback: (...args: unknown[]) => LogthingInterface<T>;
 }
 
 type LogthingInterface<T extends string> = {
@@ -42,25 +42,75 @@ export class Logthing<TLevel extends string> {
 	}
 
 	private create_named_logger(level: string, name: string) {
-		const iface = this.get_interface();
-		return function (content: string, ...args: unknown[]): LogthingInterface<TLevel> {
-			const whoami = `${name}(${level}):`;
-			if (args.length > 0) {
-				const pretty_objects = args.map(arg => {
-					try {
-						if (typeof arg === "string") {
-							arg = JSON.parse(arg);
-						}
-						return util.inspect(arg, { depth: null, colors: true })
-					} catch (error) {
-						return arg;
-					}
-				})
-				console.log(`\n${whoami} ${content}\n`, ...pretty_objects);
-			} else {
-				console.log(`${whoami} ${content}`, ...args);
+		const prefix = `${name}(${level}):`;
+
+
+		return (...args: unknown[]): LogthingInterface<TLevel> => {
+			const iface = this.get_interface()
+			const padding = ' '.repeat(prefix.length + 1);
+			if (args.length === 0) {
+				console.log(prefix);
+				return iface;
 			}
-			return iface as LogthingInterface<TLevel>;
+
+			const prettified = args.flatMap((arg, i) => {
+				let output = "";
+
+				const iteration_padding = i === 0 ? '' : padding;
+
+				/**
+				 * === Preparation ===
+				 * If possible, stringify the argument into a pretty looking object
+				 */
+				try {
+					// Attempt to parse the arg as JSON
+					if (typeof arg === "string") {
+						arg = JSON.parse(arg);
+					}
+					output = util.inspect(arg, { depth: null, colors: true });
+
+				} catch (error) {
+					// The output isn't object-like
+					// We still want to format it nicely if it's a string
+					if (typeof arg === "string") {
+						output = arg;
+					}
+					else {
+						// This should probably never happen,
+						// but just in case, display the arg as-is
+						return [arg];
+					}
+				}
+
+
+				/**
+				 * === Formatting ===
+				 * Format the output to be consistent in multi-line situations
+				 */
+				const lines = output.split('\n');
+				if (i === 0 && lines.length === 1) {
+					return [`${iteration_padding}${output}`, '\n'];
+				}
+				// If there are multiple lines, indent them.
+				return [
+					iteration_padding,
+					lines.map(
+						(line, j) => {
+							if (j === 0 || typeof line !== "string") {
+								return line;
+							}
+							if (line.includes('\n')) {
+								return line.split('\n').map((line) => `${padding}${line}`).join('\n');
+							}
+							return `${padding}${line}`
+						})
+						.join('\n'),
+					'\n'
+				]
+			})
+
+			console.log(`\n${prefix}`, prettified.join(''))
+			return iface;
 		}
 	}
 
