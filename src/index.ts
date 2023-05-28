@@ -1,14 +1,12 @@
-import * as util from 'util';
+
 import { color } from 'console-log-colors';
+import { Logger, logger } from './logger';
 
 
-type Logger<T extends string> = {
-	active: boolean;
-	callback: (...args: unknown[]) => LogthingInterface<T>;
-}
+
 
 type LogthingInterface<T extends string> = {
-	[K in T]: Logger<T>['callback'];
+	[K in T]: (...args: unknown[]) => LogthingInterface<T>;
 } & {
 	mute_levels: (name: T | T[]) => void;
 	unmute_levels: (name: T | T[]) => void;
@@ -16,11 +14,19 @@ type LogthingInterface<T extends string> = {
 	unmute_all: () => void;
 }
 
+export type LogConfig = {
+	name: string;
+	prefix: string;
+	plain_prefix: string;
+	flag: string;
+	padding: string;
+}
 
 export type Template<T extends string> = {
 	name: T;
 	prefix: string;
 	flag: string;
+	config: LogConfig;
 }
 
 const default_flag = (name: string) => {
@@ -73,14 +79,20 @@ type LevelConfig<T = string> = T | {
 	template?: AvailableTemplateNames;
 };
 
+type Channel = {
+	active: boolean;
+	config: LogConfig;
+	callback: Logger;
+}
 
-export class Logthing<TLevel extends string> {
-	public loggers: Record<TLevel, Logger<TLevel>>;
 
-	constructor (name: string, levels: LevelConfig<TLevel>[]) {
-		this.loggers = {} as Record<TLevel, Logger<TLevel>>;
+export class Logthing<Name extends string> {
+	public channels: Record<Name, Channel> = {} as any;
+
+	constructor (name: string, levels: LevelConfig<Name>[]) {
+
 		for (const level of levels) {
-			let level_name: TLevel;
+			let level_name: Name;
 			let prefix: string = '';
 			let flag: string = '';
 
@@ -99,123 +111,76 @@ export class Logthing<TLevel extends string> {
 				}
 			}
 
-			this.loggers[level_name] = {
+			const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
+			const padding = ' '.repeat(plain_prefix.length + 1);
+
+			const config: LogConfig = {
+				name: level_name,
+				prefix,
+				plain_prefix,
+				flag,
+				padding,
+			}
+
+			this.channels[level_name] = {
 				active: true,
-				callback: this.create_named_logger(`${flag}${prefix}`),
+				config,
+				callback: logger,
 			};
 		}
+
 	}
 
-	public get_interface = () => {
-		return {
-			...Object.keys(this.loggers).reduce((acc, key) => {
-				const logger = this.loggers[key as TLevel];
-				acc[key as TLevel] = logger.callback;
-				return acc;
-			}, {} as Record<TLevel, Logger<TLevel>['callback']>),
-			mute_levels: this.mute_levels,
-			unmute_levels: this.unmute_levels,
-			mute_all: this.mute_all,
-			unmute_all: this.unmute_all,
-		}
-	}
+	public get_interface() {
+		const methods = {
+			mute_levels: this.mute.bind(this),
+			unmute_levels: this.unmute.bind(this),
+			mute_all: this.mute_all.bind(this),
+			unmute_all: this.unmute_all.bind(this),
+		} as any;
 
-	private create_named_logger(prefix: string) {
-		// Remove color codes from the prefix
-		const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
-		const padding = ' '.repeat(plain_prefix.length + 1);
+		for (const [name, channel] of Object.entries<Channel>(this.channels)) {
 
-		return (...args: unknown[]): LogthingInterface<TLevel> => {
-			const iface = this.get_interface()
-			if (args.length === 0) {
-				return iface;
+			if (name in methods) {
+				throw new Error(`Channel name "${name}" is reserved`);
 			}
 
-			const prettified = args.flatMap((arg, i) => {
-				let output = "";
-
-				const iteration_padding = i === 0 ? '' : padding;
-
-				/**
-				 * === Preparation ===
-				 * If possible, stringify the argument into a pretty looking object
-				 */
-				try {
-					// Attempt to parse the arg as JSON
-					if (typeof arg === "string") {
-						arg = JSON.parse(arg);
-					}
-					output = util.inspect(arg, { depth: null, colors: true });
-
-				} catch (error) {
-					// The output isn't object-like
-					// We still want to format it nicely if it's a string
-					if (typeof arg === "string") {
-						output = arg;
-					}
-					else {
-						// This should probably never happen,
-						// but just in case, display the arg as-is
-						return [arg];
-					}
+			methods[name] = (...args: unknown[]) => {
+				if (channel.active) {
+					channel.callback(channel.config, ...args);
 				}
+				return methods;
+			}
 
-
-				/**
-				 * === Formatting ===
-				 * Format the output to be consistent in multi-line situations
-				 */
-				const lines = output.split('\n');
-				if (i === 0 && lines.length === 1) {
-					return [`${iteration_padding}${output}`, '\n'];
-				}
-				// If there are multiple lines, indent them.
-				return [
-					iteration_padding,
-					lines.map(
-						(line, j) => {
-							if (j === 0 || typeof line !== "string") {
-								return line;
-							}
-							if (line.includes('\n')) {
-								return line.split('\n').map((line) => `${padding}${line}`).join('\n');
-							}
-							return `${padding}${line}`
-						})
-						.join('\n'),
-					'\n'
-				]
-			})
-
-			console.log(`\n${prefix}`, prettified.join(''))
-			return iface;
 		}
+
+		return methods as LogthingInterface<Name>;
 	}
 
-	private mute_levels(name: TLevel | TLevel[]) {
+	private mute(name: Name | Name[]) {
 
 		const levels = Array.isArray(name) ? name : [name];
 		for (const level of levels) {
-			if (this.loggers[level]) {
-				this.loggers[level]!.active = false;
+			if (this.channels[level]) {
+				this.channels[level]!.active = false;
 			}
 		}
 	}
 
-	private unmute_levels(name: TLevel | TLevel[]) {
+	private unmute(name: Name | Name[]) {
 		const levels = Array.isArray(name) ? name : [name];
 		for (const level of levels) {
-			if (this.loggers[level]) {
-				this.loggers[level]!.active = true;
+			if (this.channels[level]) {
+				this.channels[level]!.active = true;
 			}
 		}
 	}
 
 	private mute_all() {
-		this.mute_levels(Object.keys(this.loggers) as TLevel[]);
+		this.mute(Object.keys(this.channels) as Name[]);
 	}
 
 	private unmute_all() {
-		this.unmute_levels(Object.keys(this.loggers) as TLevel[]);
+		this.unmute(Object.keys(this.channels) as Name[]);
 	}
 }

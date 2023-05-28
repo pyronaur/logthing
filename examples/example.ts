@@ -22,10 +22,11 @@ const instance = new Logthing('Inception', [
 ]);
 
 const log = instance.get_interface();
-
+// log.mute_levels('debug');
 log
+	.boom("Boom Template")
 	.no_template("No Template")
-	.warn('Warning', 'You are in a dream')  // Test logging strings
+	.warn('Warning', 'You are in a dream', 'Dreaming')  // Test logging strings
 	.debug('Welcome', 'You have entered the world of dreams')  // Test logging strings
 	.debug({ character: 'C◍obb' }) // Test logging simple object
 	.debug(['Dream Level 1', 'Dream Level 2'])  // Test logging array
