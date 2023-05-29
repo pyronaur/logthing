@@ -1,13 +1,13 @@
 // import { color } from 'console-log-colors';
 import { logger } from './logger';
-import { DeliveryInterface, LogConfig } from './types';
+import { DeliveryInterface, Channel } from './types';
 
 export class Console implements DeliveryInterface {
 
-	private buffer: { config: LogConfig, args: unknown[] }[] = [];
+	private buffer: { config: Channel, args: unknown[] }[] = [];
 	private is_buffering = false;
 
-	public deliver(config: LogConfig, ...args: unknown[]): void {
+	public deliver(config: Channel, ...args: unknown[]): void {
 		if (this.is_buffering) {
 			this.buffer.push({
 				config,

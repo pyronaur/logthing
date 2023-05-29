@@ -1,6 +1,5 @@
-import { logger } from './logger';
 import { Console } from './delivery.console';
-import { AvailableTemplateNames, Channel, LogConfig, LogthingInterface } from './types';
+import { AvailableTemplateNames, Channel, LogthingInterface } from './types';
 import { Templates, default_flag } from './templates';
 
 type LogthingConfig<Name = string> = Name | {
@@ -11,6 +10,8 @@ type LogthingConfig<Name = string> = Name | {
 };
 
 export class Logthing<Name extends string> {
+
+	private active_channels = new Set<Name>();
 	public channels: Record<Name, Channel> = {} as any;
 
 	constructor (name: string, channels: LogthingConfig<Name>[]) {
@@ -38,18 +39,14 @@ export class Logthing<Name extends string> {
 			const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
 			const padding = ' '.repeat(plain_prefix.length + 1);
 
-			const config: LogConfig = {
+			this.active_channels.add(channel_name);
+			this.channels[channel_name] = {
 				name: channel_name,
 				prefix,
 				plain_prefix,
 				flag,
 				padding,
 			}
-
-			this.channels[channel_name] = {
-				active: true,
-				config,
-			};
 		}
 
 	}
@@ -79,8 +76,8 @@ export class Logthing<Name extends string> {
 			}
 
 			methods[name] = (...args: unknown[]) => {
-				if (channel.active) {
-					delivery.deliver(channel.config, ...args);
+				if (this.active_channels.has(name as Name)) {
+					delivery.deliver(channel, ...args);
 				}
 				return methods;
 			}
@@ -91,29 +88,20 @@ export class Logthing<Name extends string> {
 	}
 
 	private mute(name: Name | Name[]) {
-
 		const channels = Array.isArray(name) ? name : [name];
-		for (const channel of channels) {
-			if (this.channels[channel]) {
-				this.channels[channel]!.active = false;
-			}
-		}
+		this.active_channels = new Set([...this.active_channels].filter(c => !channels.includes(c)));
 	}
 
 	private unmute(name: Name | Name[]) {
 		const channels = Array.isArray(name) ? name : [name];
-		for (const channel of channels) {
-			if (this.channels[channel]) {
-				this.channels[channel]!.active = true;
-			}
-		}
+		this.active_channels = new Set([...this.active_channels, ...channels]);
 	}
 
 	private mute_all() {
-		this.mute(Object.keys(this.channels) as Name[]);
+		this.active_channels = new Set();
 	}
 
 	private unmute_all() {
-		this.unmute(Object.keys(this.channels) as Name[]);
+		this.active_channels = new Set(Object.keys(this.channels) as Name[]);
 	}
 }

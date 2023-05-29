@@ -1,7 +1,7 @@
 import { Templates } from './templates';
 
 export interface DeliveryInterface {
-	deliver(channel: LogConfig, data: string): void;
+	deliver(channel: Channel, data: string): void;
 }
 
 export type LogthingInterface<T extends string> = {
@@ -15,7 +15,7 @@ export type LogthingInterface<T extends string> = {
 	write: () => LogthingInterface<T>;
 }
 
-export type LogConfig = {
+export type Channel = {
 	name: string;
 	prefix: string;
 	plain_prefix: string;
@@ -27,13 +27,7 @@ export type Template<T extends string> = {
 	name: T;
 	prefix: string;
 	flag: string;
-	config: LogConfig;
+	config: Channel;
 }
-
-export type Channel = {
-	active: boolean;
-	config: LogConfig;
-}
-
 
 export type AvailableTemplateNames = keyof typeof Templates;

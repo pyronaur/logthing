@@ -1,9 +1,9 @@
 import * as util from 'util';
-import { LogConfig } from './types';
+import { Channel } from './types';
 
-export type Logger = (config: LogConfig, ...args: unknown[]) => string;
+export type Logger = (config: Channel, ...args: unknown[]) => string;
 
-export const logger: Logger = (config: LogConfig, ...args: unknown[]): string => {
+export const logger: Logger = (config: Channel, ...args: unknown[]): string => {
 
 	const { padding, prefix } = config;
 
