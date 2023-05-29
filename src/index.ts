@@ -63,8 +63,8 @@ export class Logthing<Name extends string> {
 			unmute: this.unmute.bind(this),
 			mute_all: this.mute_all.bind(this),
 			unmute_all: this.unmute_all.bind(this),
-			section: (name: string) => {
-				delivery.section_start(name);
+			section: () => {
+				delivery.section_start();
 				return methods;
 			},
 			write: () => {
@@ -81,8 +81,7 @@ export class Logthing<Name extends string> {
 
 			methods[name] = (...args: unknown[]) => {
 				if (channel.active) {
-					const result = channel.callback(channel.config, ...args);
-					delivery.deliver(result);
+					delivery.deliver(channel.config, ...args);
 				}
 				return methods;
 			}

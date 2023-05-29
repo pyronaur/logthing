@@ -2,7 +2,7 @@ import { Logger } from './logger';
 import { Templates } from './templates';
 
 export interface DeliveryInterface {
-	deliver(data: string): void;
+	deliver(channel: LogConfig, data: string): void;
 }
 
 export type LogthingInterface<T extends string> = {
