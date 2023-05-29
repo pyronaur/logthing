@@ -64,11 +64,11 @@ export class Logthing<Name extends string> {
 			mute_all: this.mute_all.bind(this),
 			unmute_all: this.unmute_all.bind(this),
 			section: () => {
-				delivery.section_start();
+				delivery.buffer_start();
 				return methods;
 			},
 			write: () => {
-				delivery.section_end();
+				delivery.buffer_end();
 				return methods;
 			}
 		} as any;

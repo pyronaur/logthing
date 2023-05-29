@@ -19,17 +19,17 @@ export class Console implements DeliveryInterface {
 		console.log(logger(config, ...args));
 	}
 
-	section_start() {
+	buffer_start() {
 		// Clear the previous buffer
 		if (this.is_buffering) {
-			this.section_end()
+			this.buffer_end()
 		}
 
 		this.is_buffering = true;
 		// this.buffer.push(color.dim(`[${name}]`));
 	}
 
-	section_end() {
+	buffer_end() {
 		// this.buffer.push(color.dim(`[end]`));
 		this.is_buffering = false;
 		for (const { config, args } of this.buffer) {
