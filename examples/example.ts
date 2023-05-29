@@ -30,14 +30,21 @@ log
 	.debug('Welcome', 'You have entered the world of dreams')  // Test logging strings
 	.debug({ character: 'C◍obb' }) // Test logging simple object
 	.debug(['Dream Level 1', 'Dream Level 2'])  // Test logging array
+
 	.error(new Error('Unexpected dream collapse'))  // Test logging Error objects
 	.info([1, 2, 3, 4, 5, 6])  // Test logging numbers in array
 	.info(3, 2)  // Test logging numbers
 	.debug(() => 'This is a dream function') // Test logging functions
+	.section('Inception')  // Test logging section
+	.info("I'm in inception")
+	.info("I'm in inception")
+	.info("I'm in inception")
+	.info("I'm in inception")
 	.info(true)  // Test logging boolean
 	.debug(undefined) // Test logging undefined
 	.info(null)  // Test logging null
 	.debug(Symbol('Dream'))  // Test logging Symbol
+	.section('DOUBLE INCEPTION')  // Test logging section
 	.debug({   // Test logging multi-line complex object
 		dreamLevel: 'Level 1',
 		events:
@@ -53,6 +60,7 @@ log
 		dreamLayers: 4,
 		dreamCollapsed: false
 	})
+	.write()
 	.custom("Custom Template")
 	.boom("Custom Template 2")
 	.banana("🍌 Banana Template")

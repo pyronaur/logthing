@@ -1,14 +1,14 @@
 import * as util from 'util';
 import { LogConfig } from './index';
 
-export type Logger = (config: LogConfig, ...args: unknown[]) => void;
+export type Logger = (config: LogConfig, ...args: unknown[]) => string;
 
-export const logger: Logger = (config: LogConfig, ...args: unknown[]) => {
+export const logger: Logger = (config: LogConfig, ...args: unknown[]): string => {
 
 	const { padding, prefix } = config;
 
 	if (args.length === 0) {
-		return;
+		return '';
 	}
 
 	const prettified = args.flatMap((arg, i) => {
@@ -67,5 +67,5 @@ export const logger: Logger = (config: LogConfig, ...args: unknown[]) => {
 		]
 	})
 
-	console.log(`\n${prefix}`, prettified.join(''))
+	return `\n${prefix} ${prettified.join('')}`
 }

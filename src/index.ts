@@ -2,7 +2,42 @@
 import { color } from 'console-log-colors';
 import { Logger, logger } from './logger';
 
+interface DeliveryInterface {
+	deliver(data: string): void;
+}
 
+class Console implements DeliveryInterface {
+
+	private buffer: string[] = [];
+	private is_buffering = false;
+
+	public deliver(data: string): void {
+		if (this.is_buffering) {
+			this.buffer.push(data);
+			return;
+		}
+
+		console.log(data);
+	}
+
+	section_start(name: string) {
+		// Clear the previous buffer
+		if (this.is_buffering) {
+			this.section_end()
+		}
+
+		this.is_buffering = true;
+		this.buffer.push(color.dim(`[${name}]`));
+	}
+
+	section_end() {
+		this.buffer.push(color.dim(`[end]`));
+		this.is_buffering = false;
+		this.deliver(this.buffer.join('\n'));
+		this.buffer = [];
+	}
+
+}
 
 
 type LogthingInterface<T extends string> = {
@@ -12,6 +47,8 @@ type LogthingInterface<T extends string> = {
 	unmute_levels: (name: T | T[]) => void;
 	mute_all: () => void;
 	unmute_all: () => void;
+	section: (name: string) => LogthingInterface<T>;
+	write: () => LogthingInterface<T>;
 }
 
 export type LogConfig = {
@@ -132,11 +169,21 @@ export class Logthing<Name extends string> {
 	}
 
 	public get_interface() {
+		const delivery = new Console();
+
 		const methods = {
 			mute_levels: this.mute.bind(this),
 			unmute_levels: this.unmute.bind(this),
 			mute_all: this.mute_all.bind(this),
 			unmute_all: this.unmute_all.bind(this),
+			section: (name: string) => {
+				delivery.section_start(name);
+				return methods;
+			},
+			write: () => {
+				delivery.section_end();
+				return methods;
+			}
 		} as any;
 
 		for (const [name, channel] of Object.entries<Channel>(this.channels)) {
@@ -147,7 +194,8 @@ export class Logthing<Name extends string> {
 
 			methods[name] = (...args: unknown[]) => {
 				if (channel.active) {
-					channel.callback(channel.config, ...args);
+					const result = channel.callback(channel.config, ...args);
+					delivery.deliver(result);
 				}
 				return methods;
 			}
