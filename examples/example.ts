@@ -10,11 +10,17 @@ const instance = new Logthing('Inception', [
 	new Console("Inception", "custom", { template: "warn", prefix: 'CUSTOM >> ' }),
 	new Console("Inception", "boom", { prefix: 'Boom 👉', symbol: '💥' }),
 	new Console("Inception", "banana", { template: "warn" }),
+	[
+		new Console("Inception", "banana", { template: "warn" }),
+		new Console("Inception", "banana", { template: "info" }),
+	],
+	// [],
 ]);
 
 const log = instance.get_interface();
-// log.mute('boom');
+
 log
+	.banana("Banana Template TWICE")
 	.boom("Boom Template")
 	.no_template("No Template")
 	.warn('Warning', 'You are in a dream', 'Dreaming')  // Test logging strings

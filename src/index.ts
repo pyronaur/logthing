@@ -1,16 +1,39 @@
 import { Console } from './delivery.console';
 import { Channel, DeliveryInterface, LogthingInterface } from './types';
 
+type NonEmptyArray<T> = [T, ...T[]];
+type DeliveryInterfaces<T extends string> = T extends DeliveryInterface<T>['name'] ? NonEmptyArray<DeliveryInterface<T>> : never
+
+
 export class Logthing<Name extends string> {
 
 	private active_channels = new Set<Name>();
 	public channels: Record<Name, Channel> = {} as any;
 
-	constructor (name: string, channels: (Name | DeliveryInterface<Name>)[]) {
+	constructor (name: string, channels: (Name | DeliveryInterface<Name> | DeliveryInterfaces<Name>)[]) {
 
 		for (const channel of channels) {
 
-			const channel_name = typeof channel === "string" ? channel : channel.name;
+			let channel_name: Name;
+
+			// Plain channel names become "default" console.logs
+			if (typeof channel === "string") {
+				channel_name = channel;
+			}
+			// Accept a Delivery Interface directly as a channel
+			else if (typeof channel === "object" && !Array.isArray(channel)) {
+				channel_name = channel.name;
+			}
+			// Accept an array of Delivery Interfaces as a channel
+			else if (Array.isArray(channel) && channel.length > 0) {
+				channel_name = channel[0].name as Name;
+			}
+			// Otherwise, throw an error
+			else {
+				throw new Error("Invalid channel");
+			}
+
+			// const channel_name = typeof channel === "string" ? channel : channel.name;
 			this.active_channels.add(channel_name);
 
 			// If channel is a DeliveryInterface
@@ -18,7 +41,11 @@ export class Logthing<Name extends string> {
 			if (typeof channel === "string") {
 				drivers.push(new Console(name, channel_name));
 			} else {
-				drivers.push(channel);
+				if (Array.isArray(channel)) {
+					drivers.push(...channel as DeliveryInterface<Name>[]);
+				} else {
+					drivers.push(channel);
+				}
 			}
 
 			this.channels[channel_name] = {
