@@ -1,3 +1,4 @@
+import { Logger } from './logger';
 import { Templates } from './templates';
 
 export interface DeliveryInterface {
@@ -7,8 +8,8 @@ export interface DeliveryInterface {
 export type LogthingInterface<T extends string> = {
 	[K in T]: (...args: unknown[]) => LogthingInterface<T>;
 } & {
-	mute_levels: (name: T | T[]) => void;
-	unmute_levels: (name: T | T[]) => void;
+	mute: (name: T | T[]) => void;
+	unmute: (name: T | T[]) => void;
 	mute_all: () => void;
 	unmute_all: () => void;
 	section: (name: string) => LogthingInterface<T>;
@@ -30,7 +31,7 @@ export type Template<T extends string> = {
 	config: LogConfig;
 }
 
-export type LevelConfig<T = string> = T | {
+export type ChannelConfig<T = string> = T | {
 	name: T;
 	prefix?: string;
 	flag?: string;

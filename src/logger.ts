@@ -1,5 +1,5 @@
 import * as util from 'util';
-import { LogConfig } from './index';
+import { LogConfig } from './types';
 
 export type Logger = (config: LogConfig, ...args: unknown[]) => string;
 

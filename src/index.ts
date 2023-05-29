@@ -1,34 +1,30 @@
 import { logger } from './logger';
 import { Console } from './delivery.console';
-import { AvailableTemplateNames, Channel, LevelConfig, LogConfig, LogthingInterface } from './types';
+import { AvailableTemplateNames, Channel, ChannelConfig, LogConfig, LogthingInterface } from './types';
 import { Templates, default_flag } from './templates';
-
-
-
-
 
 export class Logthing<Name extends string> {
 	public channels: Record<Name, Channel> = {} as any;
 
-	constructor (name: string, levels: LevelConfig<Name>[]) {
+	constructor (name: string, channels: ChannelConfig<Name>[]) {
 
-		for (const level of levels) {
-			let level_name: Name;
+		for (const channel of channels) {
+			let channel_name: Name;
 			let prefix: string = '';
 			let flag: string = '';
 
-			if (typeof level === "string") {
-				level_name = level;
-				const template = (level_name in Templates) ? Templates[level_name as AvailableTemplateNames] : Templates['plain'];
-				({ flag, prefix } = template(name, level_name));
+			if (typeof channel === "string") {
+				channel_name = channel;
+				const template = (channel_name in Templates) ? Templates[channel_name as AvailableTemplateNames] : Templates['plain'];
+				({ flag, prefix } = template(name, channel_name));
 			} else {
-				level_name = level.name;
-				if (level.template && (level.template in Templates)) {
-					const template = Templates[level.template as AvailableTemplateNames];
-					({ flag, prefix } = template(name, level_name));
+				channel_name = channel.name;
+				if (channel.template && (channel.template in Templates)) {
+					const template = Templates[channel.template as AvailableTemplateNames];
+					({ flag, prefix } = template(name, channel_name));
 				} else {
-					prefix = level.prefix || '';
-					flag = level.flag ? level.flag : default_flag(name);
+					prefix = channel.prefix || '';
+					flag = channel.flag ? channel.flag : default_flag(name);
 				}
 			}
 
@@ -36,14 +32,14 @@ export class Logthing<Name extends string> {
 			const padding = ' '.repeat(plain_prefix.length + 1);
 
 			const config: LogConfig = {
-				name: level_name,
+				name: channel_name,
 				prefix,
 				plain_prefix,
 				flag,
 				padding,
 			}
 
-			this.channels[level_name] = {
+			this.channels[channel_name] = {
 				active: true,
 				config,
 				callback: logger,
@@ -56,8 +52,8 @@ export class Logthing<Name extends string> {
 		const delivery = new Console();
 
 		const methods = {
-			mute_levels: this.mute.bind(this),
-			unmute_levels: this.unmute.bind(this),
+			mute: this.mute.bind(this),
+			unmute: this.unmute.bind(this),
 			mute_all: this.mute_all.bind(this),
 			unmute_all: this.unmute_all.bind(this),
 			section: (name: string) => {
@@ -91,19 +87,19 @@ export class Logthing<Name extends string> {
 
 	private mute(name: Name | Name[]) {
 
-		const levels = Array.isArray(name) ? name : [name];
-		for (const level of levels) {
-			if (this.channels[level]) {
-				this.channels[level]!.active = false;
+		const channels = Array.isArray(name) ? name : [name];
+		for (const channel of channels) {
+			if (this.channels[channel]) {
+				this.channels[channel]!.active = false;
 			}
 		}
 	}
 
 	private unmute(name: Name | Name[]) {
-		const levels = Array.isArray(name) ? name : [name];
-		for (const level of levels) {
-			if (this.channels[level]) {
-				this.channels[level]!.active = true;
+		const channels = Array.isArray(name) ? name : [name];
+		for (const channel of channels) {
+			if (this.channels[channel]) {
+				this.channels[channel]!.active = true;
 			}
 		}
 	}

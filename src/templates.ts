@@ -5,38 +5,38 @@ export const default_flag = (name: string) => {
 }
 
 export const Templates = {
-	"info": (name: string, level: string) => {
+	"info": (name: string, channel: string) => {
 		return {
 			name,
-			prefix: `${color.whiteBright("✪")} ${level}:`,
+			prefix: `${color.whiteBright("✪")} ${channel}:`,
 			flag: default_flag(name),
 		}
 	},
-	"warn": (name: string, level: string) => {
+	"warn": (name: string, channel: string) => {
 		return {
 			name,
-			prefix: `${color.bold.c214("▲")} ${color.bold.underline.c214(level)}:`,
+			prefix: `${color.bold.c214("▲")} ${color.bold.underline.c214(channel)}:`,
 			flag: default_flag(name),
 		}
 	},
-	"error": (name: string, level: string) => {
+	"error": (name: string, channel: string) => {
 		return {
 			name,
-			prefix: `${color.redBright("✖")} ${color.underline.redBright(level)}:`,
+			prefix: `${color.redBright("✖")} ${color.underline.redBright(channel)}:`,
 			flag: default_flag(name),
 		}
 	},
-	"debug": (name: string, level: string) => {
+	"debug": (name: string, channel: string) => {
 		return {
 			name,
-			prefix: `${color.yellowBright("◌")} ${color.underline.yellowBright(level)}:`,
+			prefix: `${color.yellowBright("◌")} ${color.underline.yellowBright(channel)}:`,
 			flag: default_flag(name),
 		}
 	},
-	"plain": (name: string, level: string) => {
+	"plain": (name: string, channel: string) => {
 		return {
 			name,
-			prefix: `${level}:`,
+			prefix: `${channel}:`,
 			flag: default_flag(name),
 		}
 	}
