@@ -1,4 +1,3 @@
-import { Logger } from './logger';
 import { Templates } from './templates';
 
 export interface DeliveryInterface {
@@ -34,7 +33,6 @@ export type Template<T extends string> = {
 export type Channel = {
 	active: boolean;
 	config: LogConfig;
-	callback: Logger;
 }
 
 

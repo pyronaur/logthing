@@ -49,7 +49,6 @@ export class Logthing<Name extends string> {
 			this.channels[channel_name] = {
 				active: true,
 				config,
-				callback: logger,
 			};
 		}
 
