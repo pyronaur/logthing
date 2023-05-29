@@ -1,43 +1,34 @@
 import { color } from 'console-log-colors';
 
-export const default_flag = (name: string) => {
-	return color.dim(`${name} ❯ `);
-}
-
 export const Templates = {
-	"info": (name: string, channel: string) => {
+	"info": (channel: string) => {
 		return {
-			name,
-			prefix: `${color.whiteBright("✪")} ${channel}:`,
-			flag: default_flag(name),
+			symbol: color.whiteBright("✪"),
+			prefix: channel,
 		}
 	},
-	"warn": (name: string, channel: string) => {
+	"warn": (channel: string) => {
 		return {
-			name,
-			prefix: `${color.bold.c214("▲")} ${color.bold.underline.c214(channel)}:`,
-			flag: default_flag(name),
+			symbol: color.bold.c214("▲"),
+			prefix: color.bold.underline.c214(channel),
 		}
 	},
-	"error": (name: string, channel: string) => {
+	"error": (channel: string) => {
 		return {
-			name,
-			prefix: `${color.redBright("✖")} ${color.underline.redBright(channel)}:`,
-			flag: default_flag(name),
+			symbol: color.redBright("✖"),
+			prefix: color.underline.redBright(channel),
 		}
 	},
-	"debug": (name: string, channel: string) => {
+	"debug": (channel: string) => {
 		return {
-			name,
-			prefix: `${color.yellowBright("◌")} ${color.underline.yellowBright(channel)}:`,
-			flag: default_flag(name),
+			symbol: color.yellowBright("◌"),
+			prefix: color.underline.yellowBright(channel),
 		}
 	},
-	"plain": (name: string, channel: string) => {
+	"default": (channel: string) => {
 		return {
-			name,
-			prefix: `${channel}:`,
-			flag: default_flag(name),
+			symbol: '',
+			prefix: channel,
 		}
 	}
 } as const;

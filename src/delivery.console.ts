@@ -1,22 +1,129 @@
-// import { color } from 'console-log-colors';
-import { logger } from './logger';
-import { DeliveryInterface, Channel } from './types';
+import { color } from 'console-log-colors';
+import { Templates } from './templates';
+import { DeliveryInterface, AvailableTemplateNames } from './types';
+import * as util from 'util';
 
-export class Console implements DeliveryInterface {
+type ConsoleConfig = {
+	template?: AvailableTemplateNames;
+	flag?: string;
+	prefix?: string;
+	symbol?: string;
+}
 
-	private buffer: { config: Channel, args: unknown[] }[] = [];
+export class Console<Channel_Name extends string> implements DeliveryInterface {
+
+	public name: Channel_Name;
+	private buffer: unknown[][] = [];
 	private is_buffering = false;
 
-	public deliver(config: Channel, ...args: unknown[]): void {
+	private prefix = '';
+	private padding = '';
+
+	constructor (app_name: string, channel: Channel_Name, config: ConsoleConfig = {}) {
+		this.name = channel;
+		let template_name: AvailableTemplateNames = 'default';
+
+		if (!config.template && channel in Templates) {
+			template_name = channel as AvailableTemplateNames;
+		}
+
+		if (config.template) {
+			template_name = config.template;
+		}
+
+		const template = Templates[template_name];
+		let { symbol, prefix } = template(channel);
+
+		const flag = config.flag || color.dim(`${app_name} ❯ `);
+
+		if (config.prefix) {
+			prefix = config.prefix;
+		}
+
+		if (config.symbol) {
+			symbol = config.symbol;
+		}
+
+		this.prefix = `${flag} ${symbol} ${prefix}:`;
+		this.padding = ' '.repeat(this.prefix.replace(/\x1b\[\d+m/gm, '').length + 1);
+
+	}
+
+	public deliver(...args: unknown[]): void {
 		if (this.is_buffering) {
-			this.buffer.push({
-				config,
-				args,
-			});
+			this.buffer.push(args);
 			return;
 		}
 
-		console.log(logger(config, ...args));
+		console.log(this.format(...args));
+	}
+
+	private format(...args: unknown[]): string {
+
+		const padding = this.padding;
+		const prefix = this.prefix;
+
+		if (args.length === 0) {
+			return '';
+		}
+
+		const prettified = args.flatMap((arg, i) => {
+			let output = "";
+
+			const iteration_padding = i === 0 ? '' : padding;
+
+			/**
+			 * === Preparation ===
+			 * If possible, stringify the argument into a pretty looking object
+			 */
+			try {
+				// Attempt to parse the arg as JSON
+				if (typeof arg === "string") {
+					arg = JSON.parse(arg);
+				}
+				output = util.inspect(arg, { depth: null, colors: true });
+
+			} catch (error) {
+				// The output isn't object-like
+				// We still want to format it nicely if it's a string
+				if (typeof arg === "string") {
+					output = arg;
+				}
+				else {
+					// This should probably never happen,
+					// but just in case, display the arg as-is
+					return [arg];
+				}
+			}
+
+
+			/**
+			 * === Formatting ===
+			 * Format the output to be consistent in multi-line situations
+			 */
+			const lines = output.split('\n');
+			if (i === 0 && lines.length === 1) {
+				return [`${iteration_padding}${output}`, '\n'];
+			}
+			// If there are multiple lines, indent them.
+			return [
+				iteration_padding,
+				lines.map(
+					(line, j) => {
+						if (j === 0 || typeof line !== "string") {
+							return line;
+						}
+						if (line.includes('\n')) {
+							return line.split('\n').map((line) => `${padding}${line}`).join('\n');
+						}
+						return `${padding}${line}`
+					})
+					.join('\n'),
+				'\n'
+			]
+		})
+
+		return `\n${prefix} ${prettified.join('')}`
 	}
 
 	buffer_start() {
@@ -26,14 +133,12 @@ export class Console implements DeliveryInterface {
 		}
 
 		this.is_buffering = true;
-		// this.buffer.push(color.dim(`[${name}]`));
 	}
 
 	buffer_end() {
-		// this.buffer.push(color.dim(`[end]`));
 		this.is_buffering = false;
-		for (const { config, args } of this.buffer) {
-			this.deliver(config, ...args);
+		for (const args of this.buffer) {
+			this.deliver(...args);
 		}
 		this.buffer = [];
 	}

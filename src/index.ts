@@ -1,70 +1,52 @@
 import { Console } from './delivery.console';
-import { AvailableTemplateNames, Channel, LogthingInterface } from './types';
-import { Templates, default_flag } from './templates';
-
-type LogthingConfig<Name = string> = Name | {
-	name: Name;
-	prefix?: string;
-	flag?: string;
-	template?: AvailableTemplateNames;
-};
+import { Channel, DeliveryInterface, LogthingInterface } from './types';
 
 export class Logthing<Name extends string> {
 
 	private active_channels = new Set<Name>();
 	public channels: Record<Name, Channel> = {} as any;
 
-	constructor (name: string, channels: LogthingConfig<Name>[]) {
+	constructor (name: string, channels: (Name | DeliveryInterface<Name>)[]) {
 
 		for (const channel of channels) {
-			let channel_name: Name;
-			let prefix: string = '';
-			let flag: string = '';
 
+			const channel_name = typeof channel === "string" ? channel : channel.name;
+			this.active_channels.add(channel_name);
+
+			// If channel is a DeliveryInterface
+			const drivers: DeliveryInterface<Name>[] = [];
 			if (typeof channel === "string") {
-				channel_name = channel;
-				const template = (channel_name in Templates) ? Templates[channel_name as AvailableTemplateNames] : Templates['plain'];
-				({ flag, prefix } = template(name, channel_name));
+				drivers.push(new Console(name, channel_name));
 			} else {
-				channel_name = channel.name;
-				if (channel.template && (channel.template in Templates)) {
-					const template = Templates[channel.template as AvailableTemplateNames];
-					({ flag, prefix } = template(name, channel_name));
-				} else {
-					prefix = channel.prefix || '';
-					flag = channel.flag ? channel.flag : default_flag(name);
-				}
+				drivers.push(channel);
 			}
 
-			const plain_prefix = prefix.replace(/\x1b\[\d+m/gm, '');
-			const padding = ' '.repeat(plain_prefix.length + 1);
-
-			this.active_channels.add(channel_name);
 			this.channels[channel_name] = {
-				name: channel_name,
-				prefix,
-				plain_prefix,
-				flag,
-				padding,
+				name: name,
+				channel: channel_name,
+				drivers,
 			}
 		}
+	}
 
+	private active_drivers() {
+		return Array.from(this.active_channels).flatMap((channel: Name) => this.channels[channel].drivers);
 	}
 
 	public get_interface() {
-		const delivery = new Console();
-
 		const methods = {
 			mute: this.mute.bind(this),
 			unmute: this.unmute.bind(this),
 			mute_all: this.mute_all.bind(this),
 			unmute_all: this.unmute_all.bind(this),
 			section: () => {
-				delivery.buffer_start();
+				const active_drivers = this.active_drivers();
+				active_drivers.forEach(d => d.buffer_start());
 				return methods;
 			},
 			write: () => {
-				delivery.buffer_end();
+				const active_drivers = this.active_drivers();
+				active_drivers.forEach(d => d.buffer_end());
 				return methods;
 			}
 		} as any;
@@ -76,9 +58,7 @@ export class Logthing<Name extends string> {
 			}
 
 			methods[name] = (...args: unknown[]) => {
-				if (this.active_channels.has(name as Name)) {
-					delivery.deliver(channel, ...args);
-				}
+				channel.drivers.forEach(d => d.deliver(...args));
 				return methods;
 			}
 
@@ -89,12 +69,15 @@ export class Logthing<Name extends string> {
 
 	private mute(name: Name | Name[]) {
 		const channels = Array.isArray(name) ? name : [name];
+		// Maybe flush buffers?
+		// If we don't clear the buffers, then the next time we unmute, we'll get a bunch of old messages
+		// channels.forEach(channel => this.channels[channel].drivers.forEach(d => d.buffer_end()));
 		this.active_channels = new Set([...this.active_channels].filter(c => !channels.includes(c)));
 	}
 
 	private unmute(name: Name | Name[]) {
 		const channels = Array.isArray(name) ? name : [name];
-		this.active_channels = new Set([...this.active_channels, ...channels]);
+		channels.forEach(channel => this.active_channels.add(channel));
 	}
 
 	private mute_all() {

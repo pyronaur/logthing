@@ -1,3 +1,4 @@
+import { Console } from '../src/delivery.console';
 import { Logthing } from '../src/index';
 
 const instance = new Logthing('Inception', [
@@ -6,23 +7,13 @@ const instance = new Logthing('Inception', [
 	'error',
 	'warn',
 	'no_template',
-	{
-		name: 'custom',
-		prefix: 'CUSTOM >> ',
-	},
-	{
-		name: 'boom',
-		prefix: 'Boom 👉',
-		flag: '💥 ',
-	},
-	{
-		name: 'banana',
-		template: 'warn',
-	}
+	new Console("Inception", "custom", { template: "warn", prefix: 'CUSTOM >> ' }),
+	new Console("Inception", "boom", { prefix: 'Boom 👉', symbol: '💥' }),
+	new Console("Inception", "banana", { template: "warn" }),
 ]);
 
 const log = instance.get_interface();
-log.mute('boom');
+// log.mute('boom');
 log
 	.boom("Boom Template")
 	.no_template("No Template")
@@ -30,12 +21,11 @@ log
 	.debug('Welcome', 'You have entered the world of dreams')  // Test logging strings
 	.debug({ character: 'C◍obb' }) // Test logging simple object
 	.debug(['Dream Level 1', 'Dream Level 2'])  // Test logging array
-
 	.error(new Error('Unexpected dream collapse'))  // Test logging Error objects
 	.info([1, 2, 3, 4, 5, 6])  // Test logging numbers in array
 	.info(3, 2)  // Test logging numbers
 	.debug(() => 'This is a dream function') // Test logging functions
-	.section('Inception')  // Test logging section
+	.section('BUFFER START INCEPTION')  // Test logging section
 	.info("I'm in inception")
 	.info("I'm in inception")
 	.info("I'm in inception")

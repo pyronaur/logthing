@@ -1,7 +1,10 @@
 import { Templates } from './templates';
 
-export interface DeliveryInterface {
-	deliver(channel: Channel, data: string): void;
+export interface DeliveryInterface<T extends string = string> {
+	name: T;
+	deliver(...args: unknown[]): void;
+	buffer_start(): void;
+	buffer_end(): void;
 }
 
 export type LogthingInterface<T extends string> = {
@@ -17,10 +20,8 @@ export type LogthingInterface<T extends string> = {
 
 export type Channel = {
 	name: string;
-	prefix: string;
-	plain_prefix: string;
-	flag: string;
-	padding: string;
+	channel: string;
+	drivers: DeliveryInterface[];
 }
 
 export type Template<T extends string> = {
