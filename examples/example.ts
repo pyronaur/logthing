@@ -22,7 +22,7 @@ const instance = new Logthing('Inception', [
 ]);
 
 const log = instance.get_interface();
-// log.mute_levels('debug');
+log.mute('boom');
 log
 	.boom("Boom Template")
 	.no_template("No Template")

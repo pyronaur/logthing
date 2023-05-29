@@ -31,13 +31,6 @@ export type Template<T extends string> = {
 	config: LogConfig;
 }
 
-export type ChannelConfig<T = string> = T | {
-	name: T;
-	prefix?: string;
-	flag?: string;
-	template?: AvailableTemplateNames;
-};
-
 export type Channel = {
 	active: boolean;
 	config: LogConfig;

@@ -1,12 +1,19 @@
 import { logger } from './logger';
 import { Console } from './delivery.console';
-import { AvailableTemplateNames, Channel, ChannelConfig, LogConfig, LogthingInterface } from './types';
+import { AvailableTemplateNames, Channel, LogConfig, LogthingInterface } from './types';
 import { Templates, default_flag } from './templates';
+
+type LogthingConfig<Name = string> = Name | {
+	name: Name;
+	prefix?: string;
+	flag?: string;
+	template?: AvailableTemplateNames;
+};
 
 export class Logthing<Name extends string> {
 	public channels: Record<Name, Channel> = {} as any;
 
-	constructor (name: string, channels: ChannelConfig<Name>[]) {
+	constructor (name: string, channels: LogthingConfig<Name>[]) {
 
 		for (const channel of channels) {
 			let channel_name: Name;
