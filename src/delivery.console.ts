@@ -1,7 +1,7 @@
 import { color } from 'console-log-colors';
 import { Templates } from './templates';
 import { DeliveryInterface, AvailableTemplateNames } from './types';
-import * as util from 'util';
+import { inspect } from 'node-inspect-extracted';
 
 type ConsoleConfig = {
 	template?: AvailableTemplateNames;
@@ -81,7 +81,7 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 				if (typeof arg === "string") {
 					arg = JSON.parse(arg);
 				}
-				output = util.inspect(arg, { depth: null, colors: true });
+				output = inspect(arg, { depth: null, colors: true });
 
 			} catch (error) {
 				// The output isn't object-like
