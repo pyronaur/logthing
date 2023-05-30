@@ -103,7 +103,7 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 			 */
 			const lines = output.split('\n');
 			if (i === 0 && lines.length === 1) {
-				return [`${iteration_padding}${output}`, '\n'];
+				return [`${iteration_padding}${output}`];
 			}
 			// If there are multiple lines, indent them.
 			return [
@@ -119,11 +119,12 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 						return `${padding}${line}`
 					})
 					.join('\n'),
+				// Add whitespace after multiline outputs
 				'\n'
 			]
 		})
 
-		return `\n${prefix} ${prettified.join('')}`
+		return `${prefix} ${prettified.join('')}`
 	}
 
 	buffer_start() {
