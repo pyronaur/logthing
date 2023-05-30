@@ -8,6 +8,16 @@ type ConsoleConfig = {
 	flag?: string;
 	prefix?: string;
 	symbol?: string;
+	color?: 'black'
+	| 'red'
+	| 'green'
+	| 'yellow'
+	| 'blue'
+	| 'magenta'
+	| 'cyan'
+	| 'white'
+	| 'gray'
+	| 'grey'
 }
 
 export class Console<Channel_Name extends string> implements DeliveryInterface {
@@ -44,7 +54,13 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 			symbol = config.symbol;
 		}
 
-		this.prefix = `${flag} ${symbol} ${prefix}:`;
+		// Colorize the symbol and prefix if color is specified
+		let symbol_prefix = `${symbol} ${prefix}`;
+		if (config.color && config.color in color) {
+			symbol_prefix = color[config.color](symbol_prefix);
+		}
+
+		this.prefix = `${flag} ${symbol_prefix}:`;
 		this.padding = ' '.repeat(this.prefix.replace(/\x1b\[[^m]+m|\u001b\[[^m]+m/gmi, '').length + 1);
 
 	}
