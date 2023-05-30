@@ -19,7 +19,10 @@ function make_chainable<T extends Methods>(obj: T): T {
 	return obj;
 }
 
-export function logthing<T extends string>(name: string, config: LogthingChannelConfig<T>[]) {
+export function logthing<T extends string = 'debug' | 'log' | 'warn' | 'error'>(
+	name: string,
+	config: LogthingChannelConfig<T>[] = ['debug', 'log', 'warn', 'error'] as LogthingChannelConfig<T>[]
+): LogthingInterface<T> {
 	const channels = new Channels<T>(name, config);
 
 	// Methods that are not channel names
