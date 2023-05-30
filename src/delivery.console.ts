@@ -45,7 +45,7 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 		}
 
 		this.prefix = `${flag} ${symbol} ${prefix}:`;
-		this.padding = ' '.repeat(this.prefix.replace(/\x1b\[\d+m/gm, '').length + 1);
+		this.padding = ' '.repeat(this.prefix.replace(/\x1b\[[^m]+m|\u001b\[[^m]+m/gmi, '').length + 1);
 
 	}
 
