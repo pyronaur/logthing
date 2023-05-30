@@ -1,5 +1,11 @@
 # logthing
 
+## 1.0.1
+
+### Patch Changes
+
+- Use node-inspect-extracted, export Console
+
 ## 1.0.0
 
 ### Major Changes
