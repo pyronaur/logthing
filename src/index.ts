@@ -51,3 +51,6 @@ export function logthing<T extends string>(name: string, config: LogthingChannel
 	// Return a chainable object
 	return make_chainable(methods) as LogthingInterface<T>;
 }
+
+
+export { Console } from './delivery.console';
