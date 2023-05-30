@@ -1,7 +1,7 @@
 import { Console } from '../src/delivery.console';
-import { Logthing } from '../src/index';
+import { logthing } from '../src/index';
 
-const instance = new Logthing('Inception', [
+const log = logthing('Inception', [
 	'info',
 	'debug',
 	'error',
@@ -9,17 +9,14 @@ const instance = new Logthing('Inception', [
 	'no_template',
 	new Console("Inception", "custom", { template: "warn", prefix: 'CUSTOM >> ' }),
 	new Console("Inception", "boom", { prefix: 'Boom 👉', symbol: '💥' }),
-	new Console("Inception", "banana", { template: "warn" }),
 	[
 		new Console("Inception", "banana", { template: "warn" }),
 		new Console("Inception", "banana", { template: "info" }),
 	],
-	// [],
 ]);
 
-const log = instance.get_interface();
-
 log
+	.mute("banana")
 	.banana("Banana Template TWICE")
 	.boom("Boom Template")
 	.no_template("No Template")

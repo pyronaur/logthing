@@ -1,5 +1,8 @@
 import { Templates } from './templates';
 
+type NonEmptyArray<T> = [T, ...T[]];
+type DeliveryInterfaces<T extends string> = T extends DeliveryInterface<T>['name'] ? NonEmptyArray<DeliveryInterface<T>> : never
+export type LogthingChannelConfig<T extends string> = T | DeliveryInterface<T> | DeliveryInterfaces<T>;
 export interface DeliveryInterface<T extends string = string> {
 	name: T;
 	deliver(...args: unknown[]): void;
@@ -10,17 +13,17 @@ export interface DeliveryInterface<T extends string = string> {
 export type LogthingInterface<T extends string> = {
 	[K in T]: (...args: unknown[]) => LogthingInterface<T>;
 } & {
-	mute: (name: T | T[]) => void;
-	unmute: (name: T | T[]) => void;
-	mute_all: () => void;
-	unmute_all: () => void;
+	mute: (name: T | T[]) => LogthingInterface<T>;
+	unmute: (name: T | T[]) => LogthingInterface<T>;
+	mute_all: () => LogthingInterface<T>;
+	unmute_all: () => LogthingInterface<T>;
 	section: (name: string) => LogthingInterface<T>;
 	write: () => LogthingInterface<T>;
 }
 
-export type Channel = {
+export type Channel<T> = {
 	name: string;
-	channel: string;
+	channel: T;
 	drivers: DeliveryInterface[];
 }
 
@@ -28,7 +31,7 @@ export type Template<T extends string> = {
 	name: T;
 	prefix: string;
 	flag: string;
-	config: Channel;
+	config: Channel<string>;
 }
 
 export type AvailableTemplateNames = keyof typeof Templates;
