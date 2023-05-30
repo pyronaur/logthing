@@ -1,5 +1,11 @@
 # logthing
 
+## 1.0.2
+
+### Patch Changes
+
+- Display fixes - newline improvements, better padding detection
+
 ## 1.0.1
 
 ### Patch Changes
