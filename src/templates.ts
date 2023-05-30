@@ -27,7 +27,7 @@ export const Templates = {
 	},
 	"default": (channel: string) => {
 		return {
-			symbol: '',
+			symbol: ' ',
 			prefix: channel,
 		}
 	}
