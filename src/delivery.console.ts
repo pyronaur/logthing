@@ -21,7 +21,7 @@ type ConsoleConfig = {
 }
 
 export class Console<Channel_Name extends string> implements DeliveryInterface {
-
+	public static templates = Templates;
 	public name: Channel_Name;
 	private buffer: unknown[][] = [];
 	private is_buffering = false;
