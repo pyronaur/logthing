@@ -1,5 +1,11 @@
 # logthing
 
+## 1.0.0
+
+### Major Changes
+
+- Refactored all the interfaces, logthing is now initialized with a factory function.
+
 ## 0.2.0
 
 ### Minor Changes
