@@ -43,9 +43,29 @@ export function logthing<T extends string = 'debug' | 'log' | 'warn' | 'error'>(
 
 	}
 
+	// Mute channels based on LOGTHING_MUTE env var
+	if (process.env.LOGTHING_MUTE) {
+		const muted_channels = process.env.LOGTHING_MUTE.split(',')
+			.filter(name => name in methods) as T[];
+		if (muted_channels.length > 0) {
+			channels.mute(muted_channels);
+		}
+	}
+
+	// Only log to channels based on LOGTHING env var
+	if (process.env.LOGTHING_ONLY) {
+		const active_channels = process.env.LOGTHING_ONLY.split(',')
+			.filter(name => name in methods) as T[];
+		channels.mute_all();
+		if (active_channels.length > 0) {
+			channels.unmute(active_channels);
+		}
+	}
+
 	// Return a chainable object
 	return make_chainable(methods) as LogthingInterface<T>;
 }
+
 
 
 export { Console } from './delivery.console';
