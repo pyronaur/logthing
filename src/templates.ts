@@ -3,8 +3,8 @@ import { color } from 'console-log-colors';
 export const Templates = {
 	"info": (channel: string) => {
 		return {
-			symbol: color.whiteBright("✪"),
-			prefix: channel,
+			symbol: color.cyan("✪"),
+			prefix: color.cyan(channel),
 		}
 	},
 	"warn": (channel: string) => {
