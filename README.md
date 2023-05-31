@@ -1,21 +1,30 @@
-# Logthing
+# 🪵  Logthing
 
-✨ Logthing ✨   
-Simple and configurable logging with channels. Keep your `console.log` calls organized and your sanity intact.
+Simple logging with log channels configurable on the fly
 
-`logthing` is a customizable logging library for JavaScript and TypeScript. It provides an easy way to generate informative and visually distinct logs, with a flexible output mechanism and extensive customization options.
+> Organize your logs without losing your sanity.
+
+Logthing is a versatile and customizable logging library for JavaScript and TypeScript. It provides an effortless approach to produce informative and visually distinct logs, with flexible output methods and extensive customization options.
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Importing Logthing](#importing-logthing)
+- [Basic Usage](#basic-usage)
+- [Customization](#customization)
+- [Customize Delivery](#customize-delivery)
 
 ## Installation
 
-To install `logthing`, use npm:
+Logthing can be installed directly from npm. Use the following command to add it to your project:
 
-```
+```shell
 npm install logthing
 ```
 
 ## Importing Logthing
 
-To start using `logthing`, import it from the package:
+You can import `logthing` from the package like this:
 
 ```javascript
 import { logthing } from 'logthing';
@@ -23,7 +32,7 @@ import { logthing } from 'logthing';
 
 ## Basic Usage
 
-Here's how you can get started with `logthing`:
+Let's get started with a simple usage of `logthing`. Here's how you can create a log channel and print some messages:
 
 ```javascript
 const simple = logthing('Simple');
@@ -31,7 +40,7 @@ simple.log("Welcome to logthing!");
 simple.log("By default, you have access to the following methods:", Object.keys(simple));
 ```
 
-And here's what the output looks like:
+This will output:
 
 ```
 Simple ❯    log: Welcome to logthing!
@@ -48,7 +57,7 @@ Simple ❯    log: By default, you have access to the following methods:
                  ]
 ```
 
-`logthing` allows chaining of methods for a more concise logging experience:
+And did you know? You can chain methods in `logthing`:
 
 ```javascript
 simple.log("Here's what they look like:\n")
@@ -58,7 +67,7 @@ simple.log("Here's what they look like:\n")
 	.error("Error message");
 ```
 
-The output:
+Your console will now show:
 
 ```
 Simple ❯    log: Informational message
@@ -69,7 +78,7 @@ Simple ❯  ✖ error: Error message
 
 ## Customization
 
-`logthing` is all about customization. It allows you to modify log outputs, define multiple message types (aka "channels"), and change the flag, symbol, and color of the channel. You can even define a completely custom template.
+`logthing` allows you to customize your logs to your heart's content. You can tailor the output of logs, define multiple types of messages (we call them "channels"), customize the flag, symbol, and color of the channel, or even define a completely custom template.
 
 ```javascript
 const custom = logthing('Customization', [
@@ -94,9 +103,9 @@ const custom = logthing('Customization', [
 ]);
 ```
 
-### Custom Delivery
+### Customize Delivery
 
-With `logthing`, you're not limited to the console. You can define your own delivery methods, useful for sending logs to places like the file system or a remote server.
+Want to send your logs somewhere other than the console? `logthing` gives you the power to define your own delivery methods. This is especially useful if you want to send your logs to a file system or a remote server.
 
 ```typescript
 import { Console, logthing } from 'logthing';
@@ -111,27 +120,11 @@ const custom_console = logthing('Custom Console', [
 	[
 		// Console is the default delivery method.
 		new Console("Custom Console", "info"),
-		new FSLog("info")
-	],
-	[
-		new Console("Custom Console", "warn"),
-		new FSLog("warn")
-	],
-]);
+		new FSLog("
 
-custom_console.info("This is an info message that's written to the console and to a custom delivery method.");
-custom_console.warn("This is a warning message that's written to the console and to a custom delivery method.");
-```
+`Logthing` is a versatile and customizable logging library for JavaScript and TypeScript. It provides an organized and configurable way to handle console.log calls. You can install it via npm using the command `npm install logthing`.
 
-Output:
-
-```
-Custom Console ❯  ✪ info: This is an info message that's written to the console and to a custom delivery method.
-
-
-`logthing` is a versatile and customizable logging library for JavaScript and TypeScript. It provides a structured way to create informative and visually distinct logs, with flexible output methods and extensive customization options.
-
-The basic usage of `logthing` involves importing the `logthing` function from the package, using it to create a logger, and then using the logger to generate logs. Here's a simple example:
+Here is a simple example of how to use `logthing`:
 
 ```javascript
 import { logthing } from 'logthing';
@@ -141,7 +134,7 @@ simple.log("Welcome to logthing!");
 simple.log("By default, you have access to the following methods:", Object.keys(simple));
 ```
 
-You can also chain the logging methods like this:
+By default, you have access to the following methods: 'mute', 'unmute', 'mute_all', 'unmute_all', 'debug', 'log', 'warn', 'error'. You can also chain these methods:
 
 ```javascript
 simple.log("Here's what they look like:\n")
@@ -151,7 +144,7 @@ simple.log("Here's what they look like:\n")
 	.error("Error message");
 ```
 
-`logthing` offers extensive customization options. You can customize the output of logs, define multiple types of messages (called "channels"), customize the flag, symbol, and color of the channel, or even define a completely custom template.
+`logthing` offers extensive customization options. You can customize the output of logs, define multiple types of messages (called "channels"), customize the flag, symbol, and color of the channel, or even define a completely custom template. Here's an example:
 
 ```javascript
 const custom = logthing('Customization', [
@@ -159,13 +152,11 @@ const custom = logthing('Customization', [
 		name: "templates",
 		template: "warn",
 	}),
-	// Basic customization
 	{
 		name: "about",
 		symbol: "✪",
 		color: 'cyan',
 	},
-	// Custom template
 	{
 		name: "all_in",
 		color: 'magenta',
@@ -176,12 +167,13 @@ const custom = logthing('Customization', [
 ]);
 ```
 
-`logthing` also allows you to define your own delivery methods. This is useful if you want to send your logs somewhere other than the console, such as a file system or a remote server.
+`logthing` also allows you to define your own delivery methods, which is useful if you want to send your logs somewhere other than the console, such as a file system or a remote server.
 
 ```typescript
 import { Console, logthing } from 'logthing';
+
 class FSLog<T extends string> {
-	constructor (public readonly name: T) { }
+	constructor (public readonly channel: T) { }
 	deliver(...args: unknown[]) {
 		console.log("*Pretend* writing to FileSystem:", ...args, "\n");
 	}
@@ -189,7 +181,6 @@ class FSLog<T extends string> {
 
 const custom_console = logthing('Custom Console', [
 	[
-		// Console is the default delivery method.
 		new Console("Custom Console", "info"),
 		new FSLog("info")
 	],
