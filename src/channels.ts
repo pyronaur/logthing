@@ -67,9 +67,6 @@ export class Channels<Name extends string> {
 
 	public mute = (name: Name | Name[]) => {
 		const channels = Array.isArray(name) ? name : [name];
-		// Maybe flush buffers?
-		// If we don't clear the buffers, then the next time we unmute, we'll get a bunch of old messages
-		// channels.forEach(channel => this.channels[channel].drivers.forEach(d => d.buffer_end()));
 		this.active = new Set([...this.active].filter(c => !channels.includes(c)));
 	}
 

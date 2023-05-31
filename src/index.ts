@@ -30,15 +30,7 @@ export function logthing<T extends string = 'debug' | 'log' | 'warn' | 'error'>(
 		mute: channels.mute,
 		unmute: channels.unmute,
 		mute_all: channels.mute_all,
-		unmute_all: channels.unmute_all,
-		section: () => {
-			const active_drivers = channels.active_drivers();
-			active_drivers.forEach(d => d.buffer_start());
-		},
-		write: () => {
-			const active_drivers = channels.active_drivers();
-			active_drivers.forEach(d => d.buffer_end());
-		}
+		unmute_all: channels.unmute_all
 	} as any;
 
 	// Register channel names as methods

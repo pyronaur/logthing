@@ -6,8 +6,6 @@ export type LogthingChannelConfig<T extends string> = T | DeliveryInterface<T> |
 export interface DeliveryInterface<T extends string = string> {
 	name: T;
 	deliver(...args: unknown[]): void;
-	buffer_start(): void;
-	buffer_end(): void;
 }
 
 export type LogthingInterface<T extends string> = {
@@ -17,8 +15,6 @@ export type LogthingInterface<T extends string> = {
 	unmute: (name: T | T[]) => LogthingInterface<T>;
 	mute_all: () => LogthingInterface<T>;
 	unmute_all: () => LogthingInterface<T>;
-	section: (name: string) => LogthingInterface<T>;
-	write: () => LogthingInterface<T>;
 }
 
 export type Channel<T> = {

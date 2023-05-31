@@ -112,12 +112,6 @@ class LogShipperX<T extends string> {
 	deliver(...args: unknown[]) {
 		console.log("*Pretend* writing to FileSystem:", ...args, "\n");
 	}
-	buffer_start() {
-		// not implemented
-	}
-	buffer_end() {
-		// not implemented
-	}
 }
 
 const custom_console = logthing('Custom Console', [

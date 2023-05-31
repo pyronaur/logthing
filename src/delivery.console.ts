@@ -23,8 +23,6 @@ type ConsoleConfig = {
 export class Console<Channel_Name extends string> implements DeliveryInterface {
 	public static templates = Templates;
 	public name: Channel_Name;
-	private buffer: unknown[][] = [];
-	private is_buffering = false;
 
 	private prefix = '';
 	private padding = '';
@@ -66,11 +64,6 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 	}
 
 	public deliver(...args: unknown[]): void {
-		if (this.is_buffering) {
-			this.buffer.push(args);
-			return;
-		}
-
 		console.log(this.format(...args));
 	}
 
@@ -146,23 +139,6 @@ export class Console<Channel_Name extends string> implements DeliveryInterface {
 		}
 
 		return `${prefix} ${prettified.join('')}`
-	}
-
-	buffer_start() {
-		// Clear the previous buffer
-		if (this.is_buffering) {
-			this.buffer_end()
-		}
-
-		this.is_buffering = true;
-	}
-
-	buffer_end() {
-		this.is_buffering = false;
-		for (const args of this.buffer) {
-			this.deliver(...args);
-		}
-		this.buffer = [];
 	}
 
 }
