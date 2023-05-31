@@ -1,5 +1,11 @@
 # logthing
 
+## 1.1.0
+
+### Minor Changes
+
+- Better defaults, easier configuration, added documentation
+
 ## 1.0.2
 
 ### Patch Changes
