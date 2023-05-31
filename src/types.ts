@@ -1,8 +1,11 @@
+import { ConsoleConfig } from './delivery.console';
 import { Templates } from './templates';
 
 type NonEmptyArray<T> = [T, ...T[]];
 type DeliveryInterfaces<T extends string> = T extends DeliveryInterface<T>['name'] ? NonEmptyArray<DeliveryInterface<T>> : never
-export type LogthingChannelConfig<T extends string> = T | DeliveryInterface<T> | DeliveryInterfaces<T>;
+export type LogthingChannelConfig<T extends string> = T | {
+	name: T;
+} & ConsoleConfig | DeliveryInterface<T> | DeliveryInterfaces<T>;
 export interface DeliveryInterface<T extends string = string> {
 	name: T;
 	deliver(...args: unknown[]): void;

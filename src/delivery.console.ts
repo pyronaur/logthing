@@ -3,7 +3,7 @@ import { Templates } from './templates';
 import { DeliveryInterface, AvailableTemplateNames } from './types';
 import { inspect } from 'node-inspect-extracted';
 
-type ConsoleConfig = {
+export type ConsoleConfig = {
 	template?: AvailableTemplateNames;
 	flag?: string;
 	prefix?: string;

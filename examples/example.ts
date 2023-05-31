@@ -49,25 +49,26 @@ simple.debug("Here's how types look like:")
  * Customization
  */
 const custom = logthing('Customization', [
-	new Console("Customization", "templates", {
+	{
+		name: "templates",
 		template: "warn",
-	}),
+	},
 
 	// Basic customization
-	new Console("Customization", "about", {
+	{
+		name: "about",
 		symbol: "✪",
 		color: 'cyan',
-	}),
+	},
 
 	// Custom template
-	new Console("Customization", "all_in", {
+	{
+		name: "all_in",
 		color: 'magenta',
 		symbol: "[Symbol]",
 		flag: "[Flag]",
 		prefix: "[Prefix]",
-	}),
-
-
+	},
 ]);
 
 custom.about(

@@ -38,7 +38,13 @@ export class Channels<Name extends string> {
 			} else {
 				if (Array.isArray(channel)) {
 					drivers.push(...channel as DeliveryInterface<Name>[]);
-				} else {
+				}
+				// Accept plain objects as configuration for Console.
+				// @TODO: Extract knowledge about Console from Channels.
+				else if (typeof channel === "object" && 'name' in channel && !('deliver' in channel)) {
+					drivers.push(new Console(app_name, channel_name, channel as any));
+				}
+				else {
 					drivers.push(channel);
 				}
 			}
