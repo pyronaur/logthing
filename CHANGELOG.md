@@ -1,5 +1,11 @@
 # logthing
 
+## 1.1.1
+
+### Patch Changes
+
+- Improve environment variables
+
 ## 1.1.0
 
 ### Minor Changes
