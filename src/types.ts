@@ -14,10 +14,13 @@ export interface DeliveryInterface<T extends string = string> {
 export type LogthingInterface<T extends string> = {
 	[K in T]: (...args: unknown[]) => LogthingInterface<T>;
 } & {
+	name: string;
 	mute: (name: T | T[]) => LogthingInterface<T>;
 	unmute: (name: T | T[]) => LogthingInterface<T>;
 	mute_all: () => LogthingInterface<T>;
 	unmute_all: () => LogthingInterface<T>;
+	/** This is going to process the environment variables and mute/unmute channels accordingly */
+	env_ready: () => void;
 }
 
 export type Channel<T> = {
