@@ -1,5 +1,11 @@
 # logthing
 
+## 1.1.2
+
+### Patch Changes
+
+- Add option to easily create a silent logthing that's controlled by env vars
+
 ## 1.1.1
 
 ### Patch Changes

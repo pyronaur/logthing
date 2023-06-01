@@ -78,7 +78,8 @@ function handle_environment(thing: LogthingInterface<string>) {
 
 export function logthing<T extends string = 'debug' | 'info' | 'log' | 'warn' | 'error'>(
 	name: string,
-	config: LogthingChannelConfig<T>[] = ['debug', "info", 'log', 'warn', 'error'] as LogthingChannelConfig<T>[]
+	config: LogthingChannelConfig<T>[] = ['debug', "info", 'log', 'warn', 'error'] as LogthingChannelConfig<T>[],
+	silent: boolean = false
 ): LogthingInterface<T> {
 	const channels = new Channels<T>(name, config);
 
@@ -102,6 +103,9 @@ export function logthing<T extends string = 'debug' | 'info' | 'log' | 'warn' | 
 
 	}
 
+	if (silent) {
+		methods.mute_all();
+	}
 	handle_environment(methods);
 
 	// Return a chainable object
