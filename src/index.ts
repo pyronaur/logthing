@@ -36,6 +36,9 @@ function make_chainable<T extends Methods>(obj: T): T {
 function handle_environment(thing: LogthingInterface<string>) {
 	// Mute channels based on LOGTHING_MUTE env var
 	if (process.env.LOGTHING_MUTE !== undefined) {
+		if (process.env.LOGTHING_MUTE === 'all' || process.env.LOGTHING_MUTE === '*') {
+			thing.mute_all();
+		}
 		const names = process.env.LOGTHING_MUTE.split(',').map(name => name.trim()).filter(name => name.length > 0);
 		if (names.length === 0) {
 			thing.mute_all();
@@ -55,6 +58,9 @@ function handle_environment(thing: LogthingInterface<string>) {
 	}
 
 	if (process.env.LOGTHING_UNMUTE !== undefined) {
+		if (process.env.LOGTHING_UNMUTE === 'all' || process.env.LOGTHING_UNMUTE === '*') {
+			thing.unmute_all();
+		}
 		const names = process.env.LOGTHING_UNMUTE.split(',').map(name => name.trim()).filter(name => name.length > 0);
 		if (names.length === 0) {
 			thing.unmute_all();

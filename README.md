@@ -193,3 +193,40 @@ const custom_console = logthing('Custom Console', [
 custom_console.info("This is an info message that's written to the console and to a custom delivery method.");
 custom_console.warn("This is a warning message that's written to the console and to a custom delivery method.");
 ```
+
+
+## Environment Variables
+
+Use `LOGTHING_MUTE` and `LOGTHING_UNMUTE` to mute channels and logthings by either channel or logthing name.
+
+Examples:
+
+Mute logthings named `Simple` and `Customization`:
+
+```shell
+LOGTHING_MUTE=Simple,Customization
+```
+
+Unmute all info channels:
+
+```shell
+LOGTHING_MUTE=info
+```
+Mute Simple logthing and info channels:
+
+```shell
+LOGTHING_MUTE=Simple,info
+```
+
+Mute everything
+
+```shell
+LOGTHING_MUTE=
+```
+
+Both `LOGTHING_MUTE` and `LOGTHING_UNMUTE` work the same way, and can even be used together, for example, this will mute everything except info channels:
+
+```shell
+LOGTHING_MUTE=
+LOGTHING_UNMUTE=info
+```
