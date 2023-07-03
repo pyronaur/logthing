@@ -1,5 +1,11 @@
 # logthing
 
+## 1.1.4
+
+### Patch Changes
+
+- Fix attempt #2
+
 ## 1.1.3
 
 ### Patch Changes
