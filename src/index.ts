@@ -34,6 +34,9 @@ function make_chainable<T extends Methods>(obj: T): T {
  * Mute specific logthings: LOGTHING_MUTE=debug,log,My App 
  */
 function handle_environment(thing: LogthingInterface<string>) {
+	if( ! process ) {
+		return;
+	}
 	// Mute channels based on LOGTHING_MUTE env var
 	if (process.env.LOGTHING_MUTE !== undefined) {
 		if (process.env.LOGTHING_MUTE === 'all' || process.env.LOGTHING_MUTE === '*') {
