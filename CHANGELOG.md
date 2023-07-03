@@ -1,5 +1,11 @@
 # logthing
 
+## 1.1.3
+
+### Patch Changes
+
+- Handle missing process error in the browser
+
 ## 1.1.2
 
 ### Patch Changes
