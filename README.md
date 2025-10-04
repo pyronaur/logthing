@@ -1,4 +1,7 @@
-# 🪵  Logthing
+> This project is deprecated.
+> I recommend using [Logtape](https://logtape.org) instead
+
+# 🪵  Logthing (DEPRECATED)
 
 Simple logging with log channels configurable on the fly
 
